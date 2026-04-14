@@ -1,0 +1,79 @@
+# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# compiled output
+dist
+tmp
+out-tsc
+*.tsbuildinfo
+.expo
+.expo-shared
+
+# dependencies
+node_modules
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# System Files
+.DS_Store
+Thumbs.db
+
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
+
+# Replit
+.cache/
+.local/
+
+# Local env
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+*.err.log
+
+# Android / Expo build caches
+.gradle/
+.gradle-cache/
+.gradle-cache-2/
+.gradle-cache-3/
+android/.gradle/
+android/app/build/
+android/build/
+
+# Mobile local outputs
+artifacts/mobile/.gradle-cache/
+artifacts/mobile/.gradle-cache-2/
+artifacts/mobile/.gradle-cache-3/
+artifacts/mobile/codex-expo.log
+artifacts/mobile/codex-expo.err.log
+artifacts/mobile/web-run.log
+artifacts/mobile/.env
+
+# API local outputs
+artifacts/api-server/*.log

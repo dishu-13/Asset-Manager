@@ -1,0 +1,258 @@
+You are a senior full-stack engineer, AI engineer, and product designer with 10+ years of experience building scalable SaaS applications.
+
+Build a production-ready, modern SaaS web application called:
+
+🔥 AutoHire AI – Smart Job Aggregator & Resume Optimizer
+
+This platform should:
+✔ Aggregate jobs from multiple platforms (LinkedIn, Naukri, Glassdoor, etc. via APIs)
+✔ Show real-time job listings in one place
+✔ Allow users to tailor resumes using AI
+✔ Show ATS score
+✔ Redirect users to original job site when applying
+✔ Track applications and saved jobs
+
+🧠 IMPORTANT PRODUCT RULE
+DO NOT scrape LinkedIn, Naukri, Glassdoor directly
+Use APIs (RapidAPI JSearch, Adzuna, or mock data)
+Always redirect users to original job link for applying
+🏗️ TECH STACK (STRICT)
+
+Frontend:
+
+React.js (Vite)
+Tailwind CSS
+Framer Motion
+Zustand / Context API
+
+Backend:
+
+Node.js + Express
+
+Database:
+
+MongoDB (Mongoose)
+
+AI Layer:
+
+OpenAI API (or fallback NLP logic)
+
+File Handling:
+
+Multer
+pdf-parse / docx parser
+📂 PROJECT STRUCTURE
+
+/client
+/components
+/pages
+/hooks
+/utils
+/styles
+
+/server
+/controllers
+/routes
+/models
+/services
+/middlewares
+
+🔍 JOB AGGREGATION ENGINE (CORE FEATURE)
+
+Create a backend service:
+
+function getAllJobs(query)
+
+It should:
+
+Fetch jobs from multiple APIs:
+JSearch (RapidAPI)
+Adzuna API
+Mock dataset (fallback)
+Normalize all jobs into format:
+{
+title,
+company,
+location,
+salary,
+description,
+source, // LinkedIn / Naukri / etc.
+apply_url
+}
+Merge all results
+Remove duplicates
+Sort by relevance or date
+📡 BACKEND API ROUTES
+
+GET /api/jobs?q=developer
+POST /api/upload-resume
+POST /api/tailor-resume
+POST /api/apply-job
+GET /api/dashboard
+
+📄 RESUME FEATURES
+Upload resume (PDF/DOCX)
+Extract text
+Save in database
+🧠 AI RESUME TAILORING
+
+When user clicks "Tailor Resume":
+
+Extract keywords from job description
+Compare with resume
+Generate:
+✔ optimized resume
+✔ missing keywords
+✔ ATS score (0–100)
+
+Functions:
+
+extractKeywords(text)
+calculateATSScore(resume, jobDescription)
+generateTailoredResume(resume, jobDescription)
+
+ATS formula:
+score = matched_keywords / total_keywords * 100
+
+🔗 APPLY SYSTEM (IMPORTANT)
+
+Each job card must have "Apply Now" button.
+
+On click:
+
+Open original job link in new tab
+
+Example:
+window.open(job.apply_url, "_blank")
+
+DO NOT auto apply on external platforms.
+
+📊 DASHBOARD FEATURES
+Saved jobs
+Applied jobs
+Resume versions
+ATS scores
+🎨 UI/UX REQUIREMENTS (VERY IMPORTANT)
+
+Design must look like a PREMIUM SaaS product:
+
+Dark + Light mode
+Glassmorphism UI
+Gradient backgrounds
+Smooth animations (Framer Motion)
+Responsive design
+
+Layout:
+
+Sidebar navigation
+Top navbar with search
+Job cards grid
+
+Add:
+
+Loading skeletons
+Toast notifications
+Hover animations
+📄 PAGES TO BUILD
+Home Page:
+Search jobs
+Filters (location, remote, role)
+Job cards with source badges
+Job Details Page:
+Full description
+Tailor Resume button
+Resume Optimizer Page:
+Upload resume
+Show ATS score
+Show improved resume
+Dashboard:
+Saved jobs
+Applications tracking
+🧩 DATABASE MODELS
+
+User:
+
+name
+email
+password
+
+Job:
+
+title
+company
+location
+description
+source
+apply_url
+
+Resume:
+
+userId
+content
+tailoredVersions[]
+
+Application:
+
+jobId
+userId
+status (Applied / Pending / Rejected)
+✨ ADVANCED FEATURES (IF POSSIBLE)
+JWT Authentication (login/signup)
+Bookmark jobs
+Export resume as PDF
+Job recommendations
+Chrome extension placeholder
+🚀 DEPLOYMENT READY
+Use environment variables
+Add README
+Add sample data
+Clean, modular code
+📦 OUTPUT REQUIREMENTS
+Full folder structure
+Backend code (all files)
+Frontend code (all files)
+Sample data
+Setup instructions
+❗ FINAL INSTRUCTION
+
+Generate step-by-step:
+
+Backend first (APIs + job aggregation)
+Then frontend (modern UI)
+Then connect everything
+
+Make the UI stunning, animations smooth, and code production-quality.
+
+The final app should feel like a real startup product used by job seekers.
+
+⚡ HOW TO USE (VERY IMPORTANT)
+
+After pasting in Replit:
+
+👉 Step-by-step commands:
+“Start with backend implementation”
+“Now create job aggregation service”
+“Now build frontend UI with animations”
+“Now connect frontend with backend APIs”
+🧠 PRO DEV ADVICE (DON’T SKIP)
+
+👉 Build in this order:
+
+Job listing (MOST IMPORTANT)
+Resume upload
+ATS score
+Tailoring
+
+👉 Then upgrade:
+
+AI features
+Dashboard
+Chrome extension
+🚀 IF YOU WANT NEXT LEVEL
+
+I can help you:
+
+Build real working version (GitHub ready)
+Add LinkedIn-like UI (premium level)
+Add Chrome auto-fill extension
+Turn this into a startup idea 💰

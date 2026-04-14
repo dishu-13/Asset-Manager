@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: autohire-api
+    runtime: node
+    rootDir: artifacts/api-server
+    buildCommand: pnpm install --ignore-scripts && pnpm run build
+    startCommand: pnpm run start
+    envVars:
+      - key: PORT
+        value: 10000

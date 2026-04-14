@@ -1,0 +1,284 @@
+You are a senior full-stack engineer, product designer, and AI engineer with 10+ years of experience building scalable SaaS platforms.
+
+Your task is to build a **production-ready, modern SaaS web application** called:
+
+🔥 **AutoHire AI – Smart Job Finder & Resume Optimizer**
+
+This platform should help users:
+
+1. Discover real-time job openings
+2. Automatically tailor their resume for each job
+3. Improve ATS score using AI
+4. Track job applications
+5. Simulate or assist in auto-applying to jobs
+
+---
+
+## 🧠 PRODUCT THINKING (IMPORTANT)
+
+This is NOT a basic CRUD app. It must feel like:
+
+* A real startup (like LinkedIn + Rezi + SimplifyJobs)
+* Clean, premium UI
+* Fast, responsive, and scalable
+* Designed for job seekers
+
+---
+
+## 🏗️ TECH STACK (STRICT)
+
+Frontend:
+
+* React.js (with Vite)
+* Tailwind CSS
+* Framer Motion (for animations)
+* Zustand or Context API (state management)
+
+Backend:
+
+* Node.js + Express
+
+Database:
+
+* MongoDB (with Mongoose)
+
+AI Layer:
+
+* OpenAI API (if not available, mock functions)
+
+File Handling:
+
+* Multer (for resume upload)
+* pdf-parse / docx parser
+
+---
+
+## 📂 PROJECT STRUCTURE (MANDATORY)
+
+/client
+/components
+/pages
+/hooks
+/utils
+/styles
+
+/server
+/controllers
+/routes
+/models
+/services
+/middlewares
+
+---
+
+## 🎯 CORE FEATURES (IMPLEMENT PROPERLY)
+
+1. 🔍 JOB AGGREGATOR:
+
+* Fetch jobs using external API (RapidAPI or mock JSON)
+* Fields:
+
+  * title
+  * company
+  * location
+  * salary
+  * description
+  * apply link
+* Add filters:
+
+  * keyword search
+  * location
+  * remote toggle
+* Display jobs in modern card UI
+
+2. 📄 RESUME UPLOAD + PARSING:
+
+* Upload PDF/DOCX
+* Extract text
+* Save resume in DB
+* Show preview
+
+3. 🧠 AI RESUME TAILORING:
+   When user clicks "Tailor Resume":
+
+* Extract keywords from job description
+* Compare with resume content
+* Generate:
+  ✔ optimized resume
+  ✔ missing keywords list
+  ✔ ATS score (0–100)
+
+Functions:
+
+* extractKeywords(text)
+* calculateATSScore(resume, jobDescription)
+* generateTailoredResume(resume, jobDescription)
+
+4. 📊 DASHBOARD:
+
+* Saved jobs
+* Applied jobs
+* Resume history
+* ATS scores
+
+5. 🤖 APPLY SYSTEM (SIMULATED):
+
+* "Apply Now" button
+* Save status in DB
+* Track:
+
+  * Applied
+  * Pending
+  * Rejected
+
+---
+
+## 🎨 UI/UX DESIGN (VERY IMPORTANT)
+
+Design must look like a PREMIUM SaaS product:
+
+* Dark + Light mode toggle
+* Glassmorphism cards
+* Gradient backgrounds
+* Smooth animations (Framer Motion)
+* Responsive design (mobile-first)
+
+Layout:
+
+* Sidebar navigation (Dashboard, Jobs, Resume)
+* Top navbar (search + profile)
+* Card-based UI
+
+Add:
+
+* Loading skeletons
+* Toast notifications
+* Hover effects
+
+---
+
+## 📄 PAGES TO BUILD
+
+1. Home Page:
+
+* Search bar
+* Job listings grid
+
+2. Job Details Page:
+
+* Full job description
+* Tailor Resume button
+
+3. Resume Optimizer Page:
+
+* Upload resume
+* Show:
+
+  * ATS score
+  * Missing keywords
+  * Improved resume
+
+4. Dashboard:
+
+* Saved jobs
+* Applications
+* Resume versions
+
+---
+
+## ⚙️ BACKEND API (STRICT)
+
+GET /api/jobs
+POST /api/upload-resume
+POST /api/tailor-resume
+POST /api/apply-job
+GET /api/dashboard
+
+---
+
+## 🧩 DATABASE MODELS (DEFINE)
+
+User:
+
+* name
+* email
+* password
+
+Job:
+
+* title
+* company
+* location
+* description
+
+Resume:
+
+* userId
+* content
+* tailoredVersions[]
+
+Application:
+
+* jobId
+* userId
+* status
+
+---
+
+## 🧠 AI LOGIC (IMPORTANT)
+
+If OpenAI is available:
+
+* Use GPT to rewrite resume based on job description
+
+If NOT:
+
+* Implement simple NLP:
+
+  * keyword extraction using frequency
+  * match percentage calculation
+
+ATS Score Formula:
+(score = matched keywords / total keywords * 100)
+
+---
+
+## ✨ ADVANCED FEATURES (ADD IF POSSIBLE)
+
+* Authentication (JWT login/signup)
+* Export resume as PDF
+* Bookmark jobs
+* Job recommendations
+* Chrome extension (optional placeholder)
+
+---
+
+## 🚀 DEPLOYMENT READY
+
+* Add environment variables
+* Add README with setup instructions
+* Ensure code is clean and modular
+
+---
+
+## 📦 OUTPUT FORMAT
+
+1. Full folder structure
+2. Backend code (all files)
+3. Frontend code (all files)
+4. Sample data
+5. Setup guide
+
+---
+
+## ❗ FINAL INSTRUCTION
+
+Do NOT skip steps.
+Generate the project step-by-step:
+
+1. First backend
+2. Then frontend
+3. Then integration
+
+Make the UI visually stunning and modern.
+Ensure code is production-quality and scalable.

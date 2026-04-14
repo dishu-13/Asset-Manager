@@ -19,7 +19,7 @@ import { useApp } from "@/context/AppContext";
 import { useTheme } from "@/context/ThemeContext";
 import { useToast } from "@/context/ToastContext";
 import { computeATSBreakdown, getATSLevel } from "@/utils/atsUtils";
-import { generateTailoredResume } from "@/utils/aiUtils";
+import { generateTailoredResume, type TailorResponse } from "@/utils/aiUtils";
 import { fetchJobById } from "@/utils/apiService";
 
 const SOURCE_COLORS: Record<string, string> = {
@@ -80,7 +80,7 @@ export default function JobDetailScreen() {
   const isApplied = applications.some((a) => a.jobId === id);
 
   const [tailoring, setTailoring] = useState(false);
-  const [tailoredResume, setTailoredResume] = useState<string | null>(null);
+  const [tailoredResume, setTailoredResume] = useState<string | null | TailorResponse>(null);
   const [showTailored, setShowTailored] = useState(false);
   const [activeSection, setActiveSection] = useState<Section>("description");
   const [showKeywords, setShowKeywords] = useState(false);
@@ -383,7 +383,9 @@ export default function JobDetailScreen() {
                   </Pressable>
                 </View>
                 <ScrollView style={styles.tailoredScroll} nestedScrollEnabled showsVerticalScrollIndicator={false}>
-                  <Text style={[styles.tailoredText, { color: theme.text }]}>{tailoredResume}</Text>
+                  <Text style={[styles.tailoredText, { color: theme.text }]}>
+                    {typeof tailoredResume === 'string' ? tailoredResume : tailoredResume?.tailoredResume}
+                  </Text>
                 </ScrollView>
                 <Pressable
                   onPress={() => setShowTailored(false)}

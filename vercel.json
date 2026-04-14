@@ -1,0 +1,12 @@
+{
+  "framework": null,
+  "installCommand": "pnpm install --ignore-scripts",
+  "buildCommand": "cd artifacts/mobile && pnpm run build:web && cd ../..",
+  "outputDirectory": "artifacts/mobile/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

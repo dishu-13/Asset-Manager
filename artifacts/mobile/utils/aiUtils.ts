@@ -240,3 +240,13 @@ export function generateTailoringSuggestions(
 
   return suggestions;
 }
+
+/**
+ * Generate tailored resume (alias for tailorResumeContent)
+ */
+export function generateTailoredResume(
+  resume: string,
+  jobDescription: string
+): TailorResponse {
+  return tailorResumeContent(resume, jobDescription);
+}

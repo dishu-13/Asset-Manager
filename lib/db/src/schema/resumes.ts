@@ -71,8 +71,8 @@ export const savedJobsTable = pgTable(
   })
 );
 
-export const insertResumeSchema = createInsertSchema(resumesTable).omit({ id: true, createdAt: true, updatedAt: true });
-export const selectResumeSchema = createSelectSchema(resumesTable);
+export const insertResumeSchema = createInsertSchema(resumesTable).omit({ id: true, createdAt: true, updatedAt: true }) as unknown as z.ZodType<any, any, any>;
+export const selectResumeSchema = createSelectSchema(resumesTable) as unknown as z.ZodType<any, any, any>;
 
 export type InsertResume = z.infer<typeof insertResumeSchema>;
 export type Resume = typeof resumesTable.$inferSelect;

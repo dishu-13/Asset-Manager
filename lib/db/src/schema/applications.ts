@@ -69,8 +69,8 @@ export const applicationActivityTable = pgTable(
   })
 );
 
-export const insertApplicationSchema = createInsertSchema(applicationsTable).omit({ id: true, appliedAt: true, updatedAt: true });
-export const selectApplicationSchema = createSelectSchema(applicationsTable);
+export const insertApplicationSchema = createInsertSchema(applicationsTable).omit({ id: true, appliedAt: true, updatedAt: true }) as unknown as z.ZodType<any, any, any>;
+export const selectApplicationSchema = createSelectSchema(applicationsTable) as unknown as z.ZodType<any, any, any>;
 
 export type InsertApplication = z.infer<typeof insertApplicationSchema>;
 export type Application = typeof applicationsTable.$inferSelect;

@@ -279,3 +279,10 @@ export function getATSScoreColor(score: number): string {
   if (score >= 40) return "#F59E0B"; // Amber
   return "#EF4444"; // Red
 }
+
+/**
+ * Get ATS level as string
+ */
+export function getATSLevel(score: number): string {
+  return formatATSScore(score);
+}

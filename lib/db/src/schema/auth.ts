@@ -67,8 +67,8 @@ export const passwordResetTokensTable = pgTable(
   })
 );
 
-export const insertSessionSchema = createInsertSchema(sessionsTable).omit({ id: true, createdAt: true });
-export const selectSessionSchema = createSelectSchema(sessionsTable);
+export const insertSessionSchema = createInsertSchema(sessionsTable).omit({ id: true, createdAt: true }) as unknown as z.ZodType<any, any, any>;
+export const selectSessionSchema = createSelectSchema(sessionsTable) as unknown as z.ZodType<any, any, any>;
 
 export type InsertSession = z.infer<typeof insertSessionSchema>;
 export type Session = typeof sessionsTable.$inferSelect;

@@ -30,8 +30,8 @@ export const usersTable = pgTable(
   })
 );
 
-export const insertUserSchema = createInsertSchema(usersTable).omit({ id: true, createdAt: true, updatedAt: true });
-export const selectUserSchema = createSelectSchema(usersTable);
+export const insertUserSchema = createInsertSchema(usersTable).omit({ id: true, createdAt: true, updatedAt: true }) as unknown as z.ZodType<any, any, any>;
+export const selectUserSchema = createSelectSchema(usersTable) as unknown as z.ZodType<any, any, any>;
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof usersTable.$inferSelect;

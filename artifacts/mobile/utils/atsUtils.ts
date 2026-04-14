@@ -12,6 +12,9 @@ export interface ATSScore {
     education: number;
   };
   matchedKeywords: string[];
+  matched: string[]; // Always present
+  total: number; // Always present
+  missing: string[]; // Always present
 }
 
 export interface ResumeData {
@@ -49,6 +52,9 @@ export function computeATSBreakdown(
         education: 0,
       },
       matchedKeywords: [],
+      matched: [],
+      total: 0,
+      missing: [],
     };
   }
 
@@ -91,6 +97,8 @@ export function computeATSBreakdown(
     experienceScore * 0.2 +
     educationScore * 0.1;
 
+  const uniqueMatched = [...new Set(matchedKeywords)].slice(0, 10);
+  
   return {
     score: Math.round(score),
     breakdown: {
@@ -99,7 +107,10 @@ export function computeATSBreakdown(
       experience: Math.round(experienceScore),
       education: Math.round(educationScore),
     },
-    matchedKeywords: [...new Set(matchedKeywords)].slice(0, 10),
+    matchedKeywords: uniqueMatched,
+    matched: uniqueMatched,
+    total: jobKeywords.length,
+    missing: jobKeywords.filter(k => !resumeLower.includes(k)),
   };
 }
 
@@ -235,7 +246,7 @@ function hasExperienceIndicators(resume: string, job: string): boolean {
   const jobNeedsExperience =
     job.includes("experience") ||
     job.includes("years") ||
-    job.match(/\d+\+?\s*(?:years?|yrs?)/);
+    !!job.match(/\d+\+?\s*(?:years?|yrs?)/);
 
   // Score high if both have it, medium if only one
   return hasResumeExperience || jobNeedsExperience;
@@ -281,8 +292,10 @@ export function getATSScoreColor(score: number): string {
 }
 
 /**
- * Get ATS level as string
+ * Get ATS level as object with label and color
  */
-export function getATSLevel(score: number): string {
-  return formatATSScore(score);
+export function getATSLevel(score: number): { label: string; color: string } {
+  const label = formatATSScore(score);
+  const color = getATSScoreColor(score);
+  return { label, color };
 }

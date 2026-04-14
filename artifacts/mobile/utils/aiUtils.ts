@@ -1,331 +1,242 @@
 /**
- * AI Utilities for resume tailoring and optimization
+ * AI Utility Functions for Resume Tailoring
  */
 
-export interface TailoredResumeResult {
-  originalResume: string;
+export interface TailorRequest {
+  resume: string;
+  jobDescription: string;
+  targetRole?: string;
+}
+
+export interface TailorResponse {
   tailoredResume: string;
   changes: string[];
-  keywords: string[];
+  highlights: string[];
 }
 
 /**
- * Generate a tailored resume based on job description
+ * Tailor resume content to match job description
  */
-export function generateTailoredResume(
+export function tailorResumeContent(
   resume: string,
   jobDescription: string
-): TailoredResumeResult {
-  if (!resume || !jobDescription) {
-    return {
-      originalResume: resume,
-      tailoredResume: resume,
-      changes: [],
-      keywords: [],
-    };
-  }
-
-  const resumeLower = resume.toLowerCase();
-  const jobLower = jobDescription.toLowerCase();
-
-  // Extract keywords from job description
-  const jobKeywords = extractKeywordsFromJob(jobDescription);
-
-  // Tailor the resume
-  let tailoredResume = resume;
+): TailorResponse {
   const changes: string[] = [];
+  const highlights: string[] = [];
 
-  // 1. Reorder skills to match job requirements
-  const skillsInResume = extractSkillsFromResume(resume);
-  const matchingSkills = skillsInResume.filter((skill) =>
-    jobKeywords.some((keyword) => keyword.includes(skill) || skill.includes(keyword))
-  );
+  // Extract key terms from job description
+  const jobKeywords = extractJobKeywords(jobDescription);
+  let tailoredResume = resume;
 
-  if (matchingSkills.length > 0) {
-    // Prioritize matching skills in the resume
-    changes.push(`Prioritized ${matchingSkills.length} relevant skills for this job`);
-  }
-
-  // 2. Highlight relevant experience
-  const jobRequirements = extractJobRequirements(jobDescription);
-  jobRequirements.forEach((req) => {
-    if (resumeLower.includes(req.toLowerCase())) {
-      changes.push(`Highlighted experience with ${req}`);
-    }
-  });
-
-  // 3. Add missing keywords if possible
+  // 1. Identify missing skills/keywords in resume that are in job
+  const resumeLower = resume.toLowerCase();
   const missingKeywords = jobKeywords.filter(
-    (keyword) => !resumeLower.includes(keyword.toLowerCase())
+    (kw) => !resumeLower.includes(kw)
   );
 
   if (missingKeywords.length > 0) {
-    changes.push(`Identified ${missingKeywords.length} important keywords not yet in resume`);
+    changes.push(
+      `Consider adding these key skills: ${missingKeywords.slice(0, 5).join(", ")}`
+    );
   }
 
+  // 2. Reorder sections to highlight relevant experience
+  tailoredResume = reorderSections(tailoredResume, jobKeywords);
+  changes.push("Reordered experience sections to highlight relevant roles");
+
+  // 3. Enhance descriptions with action verbs
+  tailoredResume = enhanceWithActionVerbs(tailoredResume, jobKeywords);
+  changes.push("Enhanced descriptions with strong action verbs");
+
+  // 4. Identify and highlight matching keywords
+  jobKeywords.forEach((keyword) => {
+    if (resumeLower.includes(keyword)) {
+      highlights.push(keyword);
+    }
+  });
+
   return {
-    originalResume: resume,
-    tailoredResume: tailoredResume,
-    changes: changes.slice(0, 5), // Limit to top 5 changes
-    keywords: matchingSkills.slice(0, 10), // Top 10 matching skills
+    tailoredResume,
+    changes: Array.from(new Set(changes)),
+    highlights: Array.from(new Set(highlights)).slice(0, 10),
   };
 }
 
 /**
- * Extract keywords from job description
+ * Extract job-specific keywords and requirements
  */
-export function extractKeywordsFromJob(jobDescription: string): string[] {
+function extractJobKeywords(jobDescription: string): string[] {
   const keywords = new Set<string>();
 
-  const techKeywords = [
+  // Technical skills
+  const techSkills = [
     "javascript",
     "typescript",
     "react",
-    "vue",
-    "angular",
     "nodejs",
     "python",
-    "django",
-    "flask",
-    "fastapi",
     "java",
-    "spring",
-    "kotlin",
-    "go",
-    "rust",
-    "c++",
-    "c#",
-    "dotnet",
-    "php",
-    "laravel",
-    "ruby",
-    "rails",
-    "sql",
-    "postgresql",
-    "mysql",
-    "mongodb",
-    "redis",
-    "elasticsearch",
     "aws",
-    "azure",
-    "gcp",
     "docker",
     "kubernetes",
+    "sql",
+    "mongodb",
     "git",
+    "rest api",
     "graphql",
-    "rest",
-    "api",
-    "html",
-    "css",
-    "sass",
-    "webpack",
-    "vite",
-    "jest",
-    "testing",
+    "agile",
+    "scrum",
     "ci/cd",
-    "devops",
-    "linux",
-    "unix",
-    "macos",
   ];
 
+  techSkills.forEach((skill) => {
+    if (jobDescription.toLowerCase().includes(skill)) {
+      keywords.add(skill);
+    }
+  });
+
+  // Soft skills
   const softSkills = [
     "leadership",
     "communication",
     "teamwork",
     "problem solving",
-    "analytical",
-    "creativity",
-    "time management",
+    "critical thinking",
     "project management",
-    "agile",
-    "scrum",
   ];
 
-  // Extract tech keywords
-  techKeywords.forEach((keyword) => {
-    if (jobDescription.toLowerCase().includes(keyword)) {
-      keywords.add(keyword);
-    }
-  });
-
-  // Extract soft skills
   softSkills.forEach((skill) => {
     if (jobDescription.toLowerCase().includes(skill)) {
       keywords.add(skill);
     }
   });
 
-  // Extract years of experience requirement
-  const yearsMatch = jobDescription.match(/(\d+)\+?\s*(?:years?|yrs?)\s+(?:of\s+)?experience/gi);
-  if (yearsMatch) {
-    keywords.add(yearsMatch[0].trim());
-  }
-
   return Array.from(keywords);
 }
 
 /**
- * Extract skills from resume
+ * Reorder resume sections to prioritize job-relevant experience
  */
-export function extractSkillsFromResume(resume: string): string[] {
-  const skills = new Set<string>();
+function reorderSections(resume: string, jobKeywords: string[]): string {
+  // Find sections
+  const experienceSection = resume.match(
+    /(?:experience|professional experience)([\s\S]*?)(?=\n\n|education|skills|$)/i
+  );
+  const skillsSection = resume.match(/skills?([\s\S]*?)(?=\n\n|experience|$)/i);
+  const educationSection = resume.match(/education([\s\S]*?)(?=\n\n|experience|$)/i);
 
-  const commonSkills = [
-    "javascript",
-    "typescript",
-    "react",
-    "vue",
-    "angular",
-    "nodejs",
-    "python",
-    "django",
-    "flask",
-    "java",
-    "spring",
-    "kotlin",
-    "go",
-    "rust",
-    "c++",
-    "c#",
-    "php",
-    "ruby",
-    "rails",
-    "sql",
-    "postgresql",
-    "mysql",
-    "mongodb",
-    "redis",
-    "aws",
-    "azure",
-    "gcp",
-    "docker",
-    "kubernetes",
-    "git",
-    "leadership",
-    "communication",
-    "teamwork",
-    "problem solving",
-    "agile",
-    "scrum",
+  if (!experienceSection) return resume;
+
+  // Score experience entries based on keyword matches
+  const entries = experienceSection[1].split(/\n(?=[A-Z])/);
+  const scoredEntries = entries.map((entry) => ({
+    entry,
+    score: jobKeywords.filter((kw) =>
+      entry.toLowerCase().includes(kw)
+    ).length,
+  }));
+
+  // Sort by score (highest first)
+  scoredEntries.sort((a, b) => b.score - a.score);
+
+  // Reconstruct resume with reordered experience
+  const reorderedExperience = scoredEntries
+    .map((e) => e.entry)
+    .join("\n");
+  return resume.replace(experienceSection[1], reorderedExperience);
+}
+
+/**
+ * Enhance descriptions with strong action verbs
+ */
+function enhanceWithActionVerbs(resume: string, jobKeywords: string[]): string {
+  const actionVerbs = [
+    "Spearheaded",
+    "Orchestrated",
+    "Architected",
+    "Engineered",
+    "Optimized",
+    "Accelerated",
+    "Transformed",
+    "Pioneered",
+    "Leveraged",
+    "Streamlined",
+    "Amplified",
+    "Elevated",
   ];
 
-  commonSkills.forEach((skill) => {
-    if (resume.toLowerCase().includes(skill)) {
-      skills.add(skill);
-    }
+  let result = resume;
+  let verbIndex = 0;
+
+  // Replace weaker verbs with stronger ones
+  const weakVerbs = ["did", "worked", "helped", "made", "used"];
+  weakVerbs.forEach((verb) => {
+    const regex = new RegExp(`\\b${verb}\\b`, "gi");
+    result = result.replace(regex, () => {
+      const replacement = actionVerbs[verbIndex % actionVerbs.length];
+      verbIndex++;
+      return replacement;
+    });
   });
 
-  return Array.from(skills);
+  return result;
 }
 
 /**
- * Extract job requirements from job description
+ * Calculate similarity between resume and job description
  */
-export function extractJobRequirements(jobDescription: string): string[] {
-  const requirements: string[] = [];
-
-  // Look for bullet points or numbered lists
-  const bulletPattern = /^[•\-*]\s+(.+)$/gm;
-  let match;
-
-  while ((match = bulletPattern.exec(jobDescription)) !== null) {
-    const requirement = match[1].trim();
-    if (requirement.length > 10 && requirement.length < 200) {
-      requirements.push(requirement);
-    }
-  }
-
-  return requirements.slice(0, 5); // Top 5 requirements
-}
-
-/**
- * Calculate resume completeness score
- */
-export function calculateCompletenessScore(resume: string): {
-  score: number;
-  hasExperience: boolean;
-  hasEducation: boolean;
-  hasSkills: boolean;
-  hasProjects: boolean;
-} {
+export function calculateResumeJobMatch(
+  resume: string,
+  jobDescription: string
+): number {
   const resumeLower = resume.toLowerCase();
+  const jobLower = jobDescription.toLowerCase();
 
-  let score = 0;
-  const hasExperience = /work experience|employment|previously|worked at/i.test(resume);
-  const hasEducation = /education|degree|university|college|diploma|graduated/i.test(resume);
-  const hasSkills = /skills|technical|proficient|expertise|competent/i.test(resume);
-  const hasProjects = /project|built|developed|created|github/i.test(resume);
+  const jobKeywords = extractJobKeywords(jobDescription);
+  const matchedKeywords = jobKeywords.filter((kw) =>
+    resumeLower.includes(kw)
+  ).length;
 
-  if (hasExperience) score += 25;
-  if (hasEducation) score += 25;
-  if (hasSkills) score += 25;
-  if (hasProjects) score += 25;
-
-  return {
-    score,
-    hasExperience,
-    hasEducation,
-    hasSkills,
-    hasProjects,
-  };
+  return Math.round((matchedKeywords / Math.max(jobKeywords.length, 1)) * 100);
 }
 
 /**
- * Suggest resume improvements
+ * Generate tailoring suggestions
  */
-export function suggestImprovements(resume: string): string[] {
+export function generateTailoringSuggestions(
+  resume: string,
+  jobDescription: string
+): string[] {
   const suggestions: string[] = [];
+
+  const jobKeywords = extractJobKeywords(jobDescription);
   const resumeLower = resume.toLowerCase();
+  const missingKeywords = jobKeywords.filter(
+    (kw) => !resumeLower.includes(kw)
+  );
 
-  // Check word count
-  const wordCount = resume.split(/\s+/).length;
-  if (wordCount < 200) {
-    suggestions.push("Resume is quite short. Consider adding more details about your experience.");
-  } else if (wordCount > 1000) {
-    suggestions.push("Resume is quite long. Consider condensing to focus on most relevant experience.");
-  }
-
-  // Check for quantifiable achievements
-  if (!resume.match(/\d+%|\d+\$|\d+x|increased|improved|reduced/i)) {
+  if (missingKeywords.length > 0) {
     suggestions.push(
-      "Add quantifiable achievements (e.g., 'increased sales by 30%', 'reduced costs by $50k')"
+      `Add experience with: ${missingKeywords.slice(0, 3).join(", ")}`
     );
   }
 
-  // Check for action verbs
-  const actionVerbs = [
-    "achieved",
-    "built",
-    "created",
-    "designed",
-    "developed",
-    "improved",
-    "implemented",
-    "increased",
-    "led",
-    "managed",
-    "spearheaded",
-  ];
-  const hasActionVerbs = actionVerbs.some((verb) => resumeLower.includes(verb));
-  if (!hasActionVerbs) {
-    suggestions.push("Use strong action verbs (e.g., 'achieved', 'built', 'created', 'designed')");
+  if (!resumeLower.includes("metric") && jobDescription.toLowerCase().includes("metric")) {
+    suggestions.push("Include quantifiable achievements and metrics");
   }
 
-  // Check for contact info
-  if (!resume.match(/\d{3}[-.\s]?\d{3}[-.\s]?\d{4}|@/) && !resume.match(/email|phone/i)) {
-    suggestions.push("Make sure your contact information (email, phone) is clearly visible");
+  if (
+    resumeLower.match(/\b(managed|led|directed)\b/i) &&
+    jobDescription.toLowerCase().includes("leadership")
+  ) {
+    suggestions.push("Highlight your leadership experience more prominently");
   }
 
-  return suggestions.slice(0, 5); // Top 5 suggestions
-}
+  if (jobDescription.toLowerCase().includes("remote")) {
+    suggestions.push(
+      "Consider adding remote work or distributed team experience"
+    );
+  }
 
-/**
- * Get ATS score level description
- */
-export function getATSLevel(score: number): string {
-  if (score >= 85) return "Excellent Match";
-  if (score >= 70) return "Good Match";
-  if (score >= 50) return "Fair Match";
-  return "Poor Match";
+  return suggestions;
 }

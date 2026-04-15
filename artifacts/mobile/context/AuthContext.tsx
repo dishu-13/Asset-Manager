@@ -79,14 +79,21 @@ function getApiBase(): string {
   if (Platform.OS === "web" && typeof window !== "undefined") {
     const { protocol, hostname } = window.location;
     if (hostname === "localhost" || hostname === "127.0.0.1") {
-      return `${protocol}//${hostname}:3001`;
+      return `${protocol}//${hostname}:8080`;
     }
+    // On Replit: Expo runs on *.expo.picard.replit.dev
+    // The API server is on the main domain *.picard.replit.dev
+    if (hostname.includes(".expo.picard.replit.dev")) {
+      return `${protocol}//${hostname.replace(".expo.picard.replit.dev", ".picard.replit.dev")}`;
+    }
+    // Generic: same origin
+    return `${protocol}//${hostname}`;
   }
 
   const configured = process.env["EXPO_PUBLIC_API_URL"];
   if (configured) return configured;
 
-  return "http://localhost:3001";
+  return "http://localhost:8080";
 }
 
 async function apiCall(path: string, options: RequestInit = {}): Promise<any> {

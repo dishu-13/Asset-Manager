@@ -1,0 +1,50 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install expo-cli
+        run: npm install -g expo-cli
+
+      - name: Setup Android SDK
+        uses: r0adkll/setup-android@v2
+        with:
+          api-levels: 33
+          target: default
+
+      - name: Generate Android project (expo prebuild)
+        working-directory: artifacts/mobile
+        run: |
+          pnpm exec expo prebuild --platform android --no-install --non-interactive || true
+
+      - name: Ensure gradlew is executable
+        run: chmod +x artifacts/mobile/android/gradlew
+
+      - name: Build release APK
+        working-directory: artifacts/mobile/android
+        run: |
+          ./gradlew assembleRelease -x lint
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: artifacts/mobile/android/app/build/outputs/apk/release/app-release.apk

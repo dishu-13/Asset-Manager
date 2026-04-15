@@ -38,7 +38,10 @@ jobs:
 
       - name: Generate Android project (expo prebuild)
         working-directory: artifacts/mobile
+        env:
+          EXPO_PUBLIC_API_URL: https://0a00d7e7-ca43-4c1a-9b12-660411172c3f-00-1cqnmdcrgrsvh.picard.replit.dev
         run: |
+          echo "EXPO_PUBLIC_API_URL=https://0a00d7e7-ca43-4c1a-9b12-660411172c3f-00-1cqnmdcrgrsvh.picard.replit.dev" >> .env
           pnpm exec expo prebuild --platform android --no-install --non-interactive
 
       - name: Ensure gradlew is executable
@@ -46,6 +49,8 @@ jobs:
 
       - name: Build debug APK
         working-directory: artifacts/mobile/android
+        env:
+          EXPO_PUBLIC_API_URL: https://0a00d7e7-ca43-4c1a-9b12-660411172c3f-00-1cqnmdcrgrsvh.picard.replit.dev
         run: ./gradlew assembleDebug -x lint
 
       - name: Rename APK

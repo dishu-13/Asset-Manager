@@ -150,12 +150,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setToken(storedToken);
           setUser(JSON.parse(storedUser));
           try {
+            // Add 5-second timeout on auth validation to prevent hanging
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            
             const data = await apiCall("/auth/me", {
               headers: { Authorization: `Bearer ${storedToken}` },
+              signal: controller.signal,
             });
+            clearTimeout(timeoutId);
+            
             setUser(data.user);
             await AsyncStorage.setItem(USER_KEY, JSON.stringify(data.user));
-          } catch {}
+          } catch (err) {
+            // If auth validation fails or times out, continue with stored user
+            console.log("Auth validation skipped (timeout or error)");
+          }
         }
       } catch {}
       setIsLoading(false);

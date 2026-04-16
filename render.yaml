@@ -1,10 +1,11 @@
 services:
   - type: web
-    name: autohire-api
-    runtime: node
-    rootDir: artifacts/api-server
-    buildCommand: pnpm install --ignore-scripts && pnpm run build
-    startCommand: pnpm run start
+    name: autohire-ai-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile.api
     envVars:
       - key: PORT
-        value: 10000
+        value: 8080
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /api/healthz
